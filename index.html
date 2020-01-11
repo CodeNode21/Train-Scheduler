@@ -5,29 +5,179 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Train-Scheduler</title>
+      <!-- Added Moment JS -->
+    <script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
+    <style>
+    body{
+        width: 950px;
+        align-content: center;
+        font-family:'Roboto Slab', serif;
+        font-size: 14px;
+        font-weight: bold;
+        line-height:14px;
+        letter-spacing: 1px;
+        
+    }
+    .jumbotron{
+        border: solid;
+        border-width: 2px;
+        border-color: red;
+        text-align: center;
+        padding: 150px;
+        margin: 15px;
+    }
+    .table{
+        margin: 15px;
+    }
+    section{
+        border: solid;
+        border-width: 1px;
+        border-color: grey;
+        padding: 15px;
+    }
+    .addTrain{
+        margin: 15px;
+    }
+    form{
+        border: solid;
+        border-width: 1px;
+        border-color: blue;
+        padding: 15px;
+    }
+
+    </style>
 </head>
 <body>
+    <header class="jumbotron"><h1>Train Scheduler</h1></header>
+    <!-- current train schedules -->
+    <!-- table displaying train name, Destination, Frequency, Next Arrival, and Minutes Away -->
+        <section class="table"><h1>Current Train Schedule</h1>
+            <div class="table-body">
+                <th>
+                    <td>Train Name</td>
+                    <td>Destination</td>
+                    <td>Frequency</td>
+                    <td>Next Arrival</td>
+                    <td>Minutes Away</td>
+                </th>
+                <th id="trainInfo"></th>
+            </div>
+        </section>
+    <!-- add new train to scheduling -->
+        <form class="addTrain"><h1>Add New Train</h1>
+            <!-- form for new train -->
+            <!-- Train Name -->
+            <div>
+                <label id="name">Train Name</label>
+                <input type="text">
+            </div>
+            <!-- Destination -->
+            <div>
+                <label id="destination">Destination</label>
+                <input type="text">
+            </div>
+            <!-- First train time (HH:mm - military time) -->
+            <div>
+                <label id="first-time">First Train Time</label>
+                <input type="datetime">
+            </div>
+            <!-- Frequency (min) -->
+            <div>
+                <label id="frequency">Frequency</label>
+                <input type="number">
+            </div>
+            <button class= "submit" type="submit" id="add-train">Submit</button>
+        </form>
+        
+        <script src="https://code.jquery.com/jquery.js"></script>
+        
+        <!-- The core Firebase JS SDK is always required and must be listed first -->
+
+        
+        
+        <!-- // Train schedule App that incorporates Firebase to host arrival and departure data
+            // App will retrieve and manipulate this information with Moment.js
+            // this website will provide up-to date information about various trains, namely their arrival times and how many minutes remain until they arrive at their station.
+            
+            // App specs
+            // when adding trains, administrators should be able to submit the following:
+            // > Train Name
+            // > Destination
+            // > First Train Time -- in military time
+            // > Frequency -- in minutes
+            
+            // Code this app to calculate when the nest train will arrive; this should be relative to the current time
+            // Users from many different machines must be able to view same train times.
+            // Get creative with styling and theme
+            // Bonus
+            
+    // Initialize FireBase         -->
+    <script src="https://www.gstatic.com/firebasejs/6.3.0/firebase-app.js"></script>
+        
+      <!-- // TODO: Add SDKs for Firebase products that you want to use
+            https://firebase.google.com/docs/web/setup#config-web-app -->
+     <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-database.js"></script>
+
+<script>
+    // Your web app's Firebase configuration
+    var config = {
+        apiKey: "AIzaSyBEe8sdGnIR7do-mdoyEMcgiNWKXxo2TEw",
+        authDomain: "train-scheduler-df8bc.firebaseapp.com",
+        databaseURL: "https://train-scheduler-df8bc.firebaseio.com",
+        projectId: "train-scheduler-df8bc",
+        storageBucket: "",
+        messagingSenderId: "295420310055",
+        appId: "1:295420310055:web:05aa7a7454eb12cd"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(config);
+
+    // Variables
+    // Getting a reference to the database service
+    var dataRef = firebase.database();
+    // Initialize the data structure
+    var name = $("#name").val().trim();
+    var destination = $("#destination").val().trim();
+    var firstTime = $("#first-time").val().trim();
+    var frequency = $("#frequency").val().trim();
+
+    // capture submit click
+    $("#add-train").on("click", function(event) {
+        event.preventDefault();
+        // next is logic for storing new train info
 
 
+        // code to push the info
+        dataRef.ref().set({
+            trainName: name,
+            destination: destination,
+            firstTime: firstTime,
+            frequency: frequency,
+            dateAdded: firebase.database.ServerValue.TIMESTAMP
+        });
+    });
 
+    dataRef.ref().on("child_added", function(childSnapshot) {
+        console.log(childSnaphot.val());
 
-    <!--  -->
-    <script type="text/javascript">
-    // Train schedule App that incorporates Firebase to host arrical and departure data
-    // App will retrieve and manipulate this information with Moment.js
-    // this website will provide up-to date information about various trains, namely their arrival times and how many minutes remain until they arrive at their station.
+    });
+    // example functions to push AJAX to HTML
+    function createRow(data){
+        var tRow = $("<tr>");
+        var nameTd = $("<td>").text(data.name);
+        var destinationTd = $("<td>").text(data.destination);
+        var firstTimeTd = $("<td>").text(data.firstTime);
+        var frequencyTd = $("<td>").val(data.frequency);
+        tRow.append(nameTd, destinationTd, firstTimeTd, frequencyTd);
+        $("tbody").append(tRow);
+    };
+    function searchOMDB(trainId) {
+        // access firebase and .then call on the createRow function to add data to table in HTML.
+    };
     
-    // App specs
-    // when adding trains, administrators should be able to submit the following:
-    // > Train Name
-    // > Destination
-    // > First Train Time -- in military time
-    // > Frequency -- in minutes
 
-    // Code this app to calculate when the nest train will arrive; this should be relative to the current time
-    // Users from many different machines must be able to view same train times.
-    // Get creative with styling and theme
-    // Bonus
+
+
     </script>
 
 
